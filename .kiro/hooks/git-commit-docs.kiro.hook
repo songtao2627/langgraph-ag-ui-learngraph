@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Git Commit & Documentation Update",
+  "description": "Automatically saves and commits changes to git with appropriate commit messages, and updates documentation with educational content for learning purposes",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/**/*.py",
+      "frontend/src/**/*.tsx",
+      "frontend/src/**/*.ts",
+      "*.md",
+      "backend/requirements.txt",
+      "frontend/package.json"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Files have been modified in this AI-UI learning project. Please:\n\n1. **Git Operations:**\n   - Stage the changed files\n   - Create an appropriate commit message that describes what was changed and why\n   - Commit the changes with the descriptive message\n   - Consider the educational nature of this project when writing commit messages\n\n2. **Documentation Updates:**\n   - Update relevant documentation files (README.md, docs/, etc.) to reflect the changes\n   - Add educational explanations for any new concepts, patterns, or technologies introduced\n   - Include code examples and explanations that help learners understand the implementation\n   - Update any setup instructions or configuration guides if needed\n   - Ensure documentation maintains its teaching-focused approach\n\nFocus on making both the commit messages and documentation helpful for someone learning full-stack AI application development."
+  }
+}

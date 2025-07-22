@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "name": "Server Startup Check",
+  "description": "Monitors server startup scripts and configuration files to ensure services aren't already running before attempting to start them, preventing blocking issues",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "backend/main.py",
+      "frontend/package.json",
+      "backend/requirements.txt",
+      ".env",
+      "backend/app/main.py"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Check if the backend FastAPI server (port 8000) and frontend development server (port 5173/3000) are already running before startup. If either service is already running, provide guidance on how to safely stop existing processes or use different ports. Also verify that startup scripts include proper process checking to prevent blocking scenarios."
+  }
+}
