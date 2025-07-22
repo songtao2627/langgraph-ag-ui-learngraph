@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Q&A to Teaching Documentation",
+  "description": "Automatically converts question and answer sessions into structured teaching documentation and appends to teaching-log.md or creates new teaching files when needed",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "docs/teaching-log.md"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A user has been asking questions and receiving answers. Please review the recent conversation history and convert the Q&A session into a structured teaching document format. Add this to docs/teaching-log.md, or if the file is getting too large, create a new teaching document file (like docs/teaching-log-2.md, docs/teaching-log-3.md, etc.). Format the content as a clear tutorial with:\n\n1. Problem/Question section\n2. Solution/Answer section  \n3. Key learning points\n4. Code examples if applicable\n5. Related concepts or follow-up topics\n\nMake sure the teaching content is well-organized, easy to understand, and valuable for future learning reference."
+  }
+}
