@@ -3,8 +3,16 @@
  * Provides HTTP client with interceptors, error handling, and type safety
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import { ApiResponse, ApiError, ApiConfig } from '../types/api';
+import axios from 'axios';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import type { ApiResponse, ApiError, ApiConfig } from '../types/api';
+
+// Extended config interface with metadata
+interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
+  metadata?: {
+    startTime: number;
+  };
+}
 
 // Default API configuration
 const DEFAULT_CONFIG: ApiConfig = {
@@ -52,7 +60,7 @@ class ApiClient {
     this.client.interceptors.request.use(
       (config) => {
         // Add timestamp to requests for debugging
-        config.metadata = { startTime: Date.now() };
+        (config as ExtendedAxiosRequestConfig).metadata = { startTime: Date.now() };
         
         // Log request in development
         if (import.meta.env.DEV) {
@@ -74,7 +82,8 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
         // Calculate request duration
-        const duration = Date.now() - (response.config.metadata?.startTime || 0);
+        const extendedConfig = response.config as ExtendedAxiosRequestConfig;
+        const duration = Date.now() - (extendedConfig.metadata?.startTime || 0);
         
         // Log response in development
         if (import.meta.env.DEV) {
@@ -89,7 +98,8 @@ class ApiClient {
       },
       (error: AxiosError) => {
         // Calculate request duration for failed requests
-        const duration = Date.now() - (error.config?.metadata?.startTime || 0);
+        const extendedConfig = error.config as ExtendedAxiosRequestConfig;
+        const duration = Date.now() - (extendedConfig?.metadata?.startTime || 0);
         
         // Log error in development
         if (import.meta.env.DEV) {
@@ -128,7 +138,7 @@ class ApiClient {
       
       // HTTP errors with response
       const response = axiosError.response;
-      const errorData = response.data;
+      const errorData = response.data as any;
       
       return {
         message: errorData?.detail || errorData?.message || `HTTP ${response.status} Error`,

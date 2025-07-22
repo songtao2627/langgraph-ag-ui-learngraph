@@ -5,7 +5,7 @@
 
 import { apiClient } from './api';
 import type { ApiResponse } from '../types/api';
-import type { ChatRequest, ChatResponse, Message, Conversation, StreamChunk, StreamCallbacks } from '../types/chat';
+import type { ChatRequest, ChatResponse, Message, Conversation } from '../types/chat';
 
 /**
  * Interface for conversation history response
@@ -199,7 +199,11 @@ class ChatApiService {
     }
   ): Promise<void> {
     try {
-      const response = await fetch('/api/chat/stream', {
+      // Get base URL from API client config
+      const baseURL = apiClient.getConfig().baseURL;
+      const streamUrl = `${baseURL}/api/chat/stream`;
+      
+      const response = await fetch(streamUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
