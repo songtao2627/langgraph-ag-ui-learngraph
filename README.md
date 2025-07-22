@@ -106,17 +106,29 @@ npm run dev
 
 ## 学习资源
 
+### 教学文档
+- **docs/teaching-log.md**: 详细的开发过程教学日志，记录每个功能的实现思路、技术选择和最佳实践
+- **自动化文档生成**: 项目配置了Kiro钩子，可以自动将问答对话转换为结构化的教学文档
+
 ### 核心概念
 1. **LangGraph**: AI工作流编排框架
-2. **FastAPI**: 现代Python Web框架
+2. **FastAPI**: 现代Python Web框架  
 3. **React Hooks**: 状态管理和副作用处理
 4. **TypeScript**: 类型安全的JavaScript
+5. **Server-Sent Events (SSE)**: 实现流式AI响应的关键技术
 
 ### 扩展指南
 - 添加新的AI功能
 - 自定义UI组件
 - 集成其他AI模型
+- 实现流式响应功能
 - 部署到生产环境
+
+### 开发工具集成
+项目包含以下Kiro IDE钩子配置：
+- **qa-to-teaching-doc**: 自动将问答对话转换为教学文档
+- **git-commit-docs**: Git提交时自动更新文档
+- **server-startup-check**: 服务器启动时的健康检查
 
 ## 贡献
 
