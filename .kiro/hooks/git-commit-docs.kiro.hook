@@ -1,8 +1,8 @@
 {
   "enabled": true,
   "name": "Git Commit & Documentation Update",
-  "description": "Automatically saves and commits changes to git with appropriate commit messages, and updates documentation with educational content for learning purposes",
-  "version": "1",
+  "description": "Intelligently manages git operations including commits, branching for major changes, and version tagging, while maintaining educational documentation",
+  "version": "2",
   "when": {
     "type": "fileEdited",
     "patterns": [
@@ -16,6 +16,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Files have been modified in this AI-UI learning project. Please:\n\n1. **Git Operations:**\n   - Stage the changed files\n   - Create an appropriate commit message that describes what was changed and why\n   - Commit the changes with the descriptive message\n   - Consider the educational nature of this project when writing commit messages\n\n2. **Documentation Updates:**\n   - Update relevant documentation files (README.md, docs/, etc.) to reflect the changes\n   - Add educational explanations for any new concepts, patterns, or technologies introduced\n   - Include code examples and explanations that help learners understand the implementation\n   - Update any setup instructions or configuration guides if needed\n   - Ensure documentation maintains its teaching-focused approach\n\nFocus on making both the commit messages and documentation helpful for someone learning full-stack AI application development."
+    "prompt": "Files have been modified in this AI-UI learning project. Please analyze the changes and determine the appropriate git workflow:\n\n## Change Analysis\nFirst, analyze the modified files to determine if this is:\n- **Minor Change**: Bug fixes, small improvements, documentation updates\n- **Major Change**: New features, architectural changes, breaking changes, major refactoring\n\n## Git Workflow Decision\n\n### For Minor Changes:\n1. **Standard Git Operations:**\n   - Stage the changed files\n   - Create descriptive commit message\n   - Commit directly to current branch\n\n### For Major Changes:\n1. **Branch Management Workflow:**\n   - Check current branch status\n   - If on main/master, create a new feature branch: `git checkout -b feature/[descriptive-name]`\n   - Stage and commit changes to the feature branch\n   - After development is complete, consider:\n     - Merging back to main branch\n     - Creating a version tag: `git tag -a v[version] -m \"[description]\"`\n\n2. **Version Tagging Guidelines:**\n   - Use semantic versioning (v1.0.0, v1.1.0, v2.0.0)\n   - Major version: Breaking changes or significant new features\n   - Minor version: New features, backward compatible\n   - Patch version: Bug fixes, small improvements\n\n## Documentation Updates\nRegardless of change type:\n- Update relevant documentation files (README.md, docs/, etc.)\n- Add educational explanations for new concepts or patterns\n- Include code examples and learning-focused explanations\n- Update setup instructions or configuration guides if needed\n- Maintain the teaching-focused approach for learners\n\n## Implementation Notes\n- Consider the educational nature when writing commit messages\n- Explain the reasoning behind branching/tagging decisions\n- Help learners understand when to use branches vs direct commits vs tags\n- Provide clear examples of git commands and their purposes\n\nPlease execute the appropriate workflow based on your analysis of the changes."
   }
 }
