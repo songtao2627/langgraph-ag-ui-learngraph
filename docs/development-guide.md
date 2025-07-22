@@ -399,3 +399,78 @@ YYYY年MM月DD日
 - AI应用开发指南
 - Server-Sent Events (SSE) 实现
 - 流式响应最佳实践
+
+## 流式响应技术 (Server-Sent Events)
+
+### 概念介绍
+Server-Sent Events (SSE) 是一种允许服务器向客户端推送实时数据的Web标准。在AI聊天应用中，SSE用于实现流式响应，让用户能够实时看到AI生成的回复内容。
+
+### 技术优势
+- **实时性**: 用户可以立即看到AI开始生成回复
+- **用户体验**: 避免长时间等待，提供更自然的对话体验
+- **资源效率**: 相比WebSocket更轻量，适合单向数据流
+- **兼容性**: 广泛的浏览器支持
+
+### 实现架构
+```
+Frontend (React)     Backend (FastAPI)      AI Model
+     │                      │                   │
+     ├─ POST /api/chat/stream ──────────────────┤
+     │                      │                   │
+     │              ┌─ Process Request         │
+     │              │       │                   │
+     │              ├─ Generate Stream ────────┤
+     │              │       │                   │
+     ├─ EventSource ◄─ SSE Response ◄──────────┤
+     │              │       │                   │
+     ├─ Display Chunks      │                   │
+     │              │       │                   │
+     └─ Complete Response   │                   │
+```
+
+### 后端实现要点
+```python
+from fastapi.responses import StreamingResponse
+
+@router.post("/stream")
+async def chat_stream(request: ChatRequest):
+    async def generate_sse():
+        async for chunk in ai_model.generate_stream(request):
+            yield f"data: {json.dumps(chunk.dict())}\n\n"
+    
+    return StreamingResponse(
+        generate_sse(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive"
+        }
+    )
+```
+
+### 前端实现要点
+```typescript
+const useStreamingChat = () => {
+  const [response, setResponse] = useState('');
+  
+  const sendStreamMessage = (message: string) => {
+    const eventSource = new EventSource('/api/chat/stream');
+    
+    eventSource.onmessage = (event) => {
+      const chunk = JSON.parse(event.data);
+      setResponse(prev => prev + chunk.content);
+    };
+    
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+  };
+};
+```
+
+### 学习重点
+1. **SSE协议理解**: 掌握事件流格式和浏览器API
+2. **异步生成器**: Python async generator的使用
+3. **状态管理**: 前端流式数据的状态处理
+4. **错误处理**: 网络中断和重连机制
+5. **性能优化**: 大量数据流的内存管理
