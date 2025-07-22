@@ -4,8 +4,8 @@
  */
 
 import { apiClient } from './api';
-import { ApiResponse } from '../types/api';
-import { ChatRequest, ChatResponse, Message, Conversation } from '../types/chat';
+import type { ApiResponse } from '../types/api';
+import type { ChatRequest, ChatResponse, Message, Conversation, StreamChunk, StreamCallbacks } from '../types/chat';
 
 /**
  * Interface for conversation history response
@@ -72,7 +72,7 @@ class ChatApiService {
   async sendMessage(request: ChatRequest): Promise<ApiResponse<ChatResponse>> {
     try {
       const response = await apiClient.post<ChatResponse>('/api/chat/', request);
-      
+
       // Transform response if needed
       if (response.data) {
         // Ensure timestamp is properly formatted
@@ -80,7 +80,7 @@ class ChatApiService {
           response.data.timestamp = response.data.timestamp;
         }
       }
-      
+
       return response;
     } catch (error) {
       console.error('Error sending chat message:', error);
@@ -92,14 +92,14 @@ class ChatApiService {
    * Get conversation history
    */
   async getConversationHistory(
-    conversationId: string, 
+    conversationId: string,
     limit: number = 10
   ): Promise<ApiResponse<Message[]>> {
     try {
       const response = await apiClient.get<ConversationHistoryResponse>(
         `/api/chat/history/${conversationId}?limit=${limit}`
       );
-      
+
       if (response.data) {
         // Transform backend message format to frontend Message format
         const messages: Message[] = response.data.messages.map(msg => ({
@@ -110,14 +110,14 @@ class ChatApiService {
           conversation_id: msg.conversation_id,
           metadata: msg.metadata
         }));
-        
+
         return {
           ...response,
           data: messages
         };
       }
-      
-      return response as ApiResponse<Message[]>;
+
+      return response as unknown as ApiResponse<Message[]>;
     } catch (error) {
       console.error('Error getting conversation history:', error);
       throw error;
@@ -130,7 +130,7 @@ class ChatApiService {
   async getConversations(): Promise<ApiResponse<Conversation[]>> {
     try {
       const response = await apiClient.get<ConversationsListResponse>('/api/chat/conversations');
-      
+
       if (response.data) {
         // Transform backend format to frontend Conversation format
         const conversations: Conversation[] = response.data.conversations.map(conv => ({
@@ -143,14 +143,14 @@ class ChatApiService {
             last_message_preview: conv.last_message_preview
           }
         }));
-        
+
         return {
           ...response,
           data: conversations
         };
       }
-      
-      return response as ApiResponse<Conversation[]>;
+
+      return response as unknown as ApiResponse<Conversation[]>;
     } catch (error) {
       console.error('Error getting conversations:', error);
       throw error;
@@ -165,7 +165,7 @@ class ChatApiService {
       const response = await apiClient.delete<ConversationDeleteResponse>(
         `/api/chat/history/${conversationId}`
       );
-      
+
       return response;
     } catch (error) {
       console.error('Error clearing conversation:', error);
@@ -183,6 +183,95 @@ class ChatApiService {
     } catch (error) {
       console.error('Error checking chat health:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Send a streaming chat message
+   */
+  async sendStreamingMessage(
+    request: ChatRequest,
+    callbacks: {
+      onStart?: (chunk: any) => void;
+      onChunk?: (chunk: any) => void;
+      onEnd?: (chunk: any) => void;
+      onError?: (chunk: any) => void;
+    }
+  ): Promise<void> {
+    try {
+      const response = await fetch('/api/chat/stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Response body is not readable');
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          // Decode the chunk and add to buffer
+          buffer += decoder.decode(value, { stream: true });
+
+          // Process complete SSE messages
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = line.slice(6); // Remove 'data: ' prefix
+                if (data.trim()) {
+                  const chunk = JSON.parse(data);
+
+                  // Call appropriate callback based on chunk type
+                  switch (chunk.type) {
+                    case 'start':
+                      callbacks.onStart?.(chunk);
+                      break;
+                    case 'chunk':
+                      callbacks.onChunk?.(chunk);
+                      break;
+                    case 'end':
+                      callbacks.onEnd?.(chunk);
+                      break;
+                    case 'error':
+                      callbacks.onError?.(chunk);
+                      break;
+                  }
+                }
+              } catch (parseError) {
+                console.error('Error parsing SSE data:', parseError);
+              }
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+    } catch (error) {
+      console.error('Error in streaming chat:', error);
+      callbacks.onError?.({
+        type: 'error',
+        content: error instanceof Error ? error.message : 'Unknown error',
+        conversation_id: request.conversation_id || 'unknown',
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
