@@ -4,13 +4,13 @@
   "description": "Automatically converts AI-UI project related Q&A sessions into structured teaching documentation focused on the learning objectives of this minimal AI chat interface project",
   "version": "2",
   "when": {
-    "type": "fileEdited",
+    "type": "userTriggered",
     "patterns": [
       "docs/teaching-log.md"
     ]
   },
   "then": {
     "type": "askAgent",
-    "prompt": "请审查最近的对话历史，将与AI-UI最小化学习项目相关的Q&A对话转换为结构化的教学文档格式。\n\n**项目主题聚焦**：\n- 这是一个AI聊天界面的教学项目\n- 核心技术栈：React + TypeScript前端，Python FastAPI后端，LangGraph工作流\n- 学习目标：AI应用开发、现代全栈开发模式、流式响应技术\n\n**内容筛选原则**：\n- 只包含与AI聊天应用开发直接相关的内容\n- 重点关注：FastAPI、React、AI模型集成、流式响应(SSE)、LangGraph工作流\n- 排除与项目学习目标无关的通用编程问题\n- 排除与AI-UI项目架构无关的技术讨论\n\n**文档格式要求**：\n按照现有的教学日志格式添加新条目到docs/teaching-log.md：\n\n```markdown\n## 第N次需求变更：[功能名称]\n\n### 📅 时间\n### 🎯 用户需求\n### 🤔 问题分析\n### 💡 解决方案设计\n### 🔧 实现步骤\n### 📝 关键学习点\n### 🧪 测试策略\n### 🎓 最佳实践总结\n### 🔮 后续优化方向\n```\n\n**重要提醒**：\n- 牢记这是一个AI-UI学习项目，所有文档内容都应该围绕这个主题\n- 如果对话内容与项目学习目标不相关，请跳过不处理\n- 确保教学内容对学习AI应用开发的开发者有实际价值\n- 保持与现有教学日志的风格和深度一致"
+    "prompt": "请审查最近的对话历史，将与AI-UI最小化学习项目相关的Q&A对话转换为结构化的教学文档格式。\n\n**项目主题聚焦**：\n- 这是一个AI聊天界面的教学项目\n- 核心技术栈：React + TypeScript前端，Python FastAPI后端，LangGraph工作流\n- 学习目标：AI应用开发、现代全栈开发模式、流式响应技术\n\n**内容筛选原则**：\n- 只包含与AI聊天应用开发直接相关的内容\n- 重点关注：FastAPI、React、AI模型集成、流式响应(SSE)、LangGraph工作流\n- 排除与项目学习目标无关的通用编程问题\n- 排除与AI-UI项目架构无关的技术讨论\n- 不同文档之间要进行内容检查，排除重复内容。如发现内容重复或归属不当：首先确认是否真的需要迁移（避免过度重构），迁移时要保持文档间的引用关系，避免创建新的重复内容，记录迁移决策以防止hook循环\n**文档格式要求**：\n- 按照现有的教学日志格式添加新条目到docs/teaching-log.md：\n\n```markdown\n## 第N次需求变更：[功能名称]\n\n### 📅 时间\n### 🎯 用户需求\n### 🤔 问题分析\n### 💡 解决方案设计\n### 🔧 实现步骤\n### 📝 关键学习点\n### 🧪 测试策略\n### 🎓 最佳实践总结\n### 🔮 后续优化方向\n```\n- 教学文档包括单不限于teaching-log.md\n\n**重要提醒**：\n- 牢记这是一个AI-UI学习项目，所有文档内容都应该围绕这个主题\n- 如果对话内容与项目学习目标不相关，请跳过不处理\n- 确保教学内容对学习AI应用开发的开发者有实际价值\n- 保持与现有教学日志的风格和深度一致"
   }
 }
