@@ -43,6 +43,23 @@ export interface ChatResponse {
   processing_time?: number;
 }
 
+// Stream chunk interface for streaming responses
+export interface StreamChunk {
+  type: 'start' | 'chunk' | 'end' | 'error';
+  content: string;
+  conversation_id: string;
+  timestamp: string;
+  metadata?: Record<string, any>;
+}
+
+// Stream response callback interface
+export interface StreamCallbacks {
+  onStart?: (chunk: StreamChunk) => void;
+  onChunk?: (chunk: StreamChunk) => void;
+  onEnd?: (chunk: StreamChunk) => void;
+  onError?: (chunk: StreamChunk) => void;
+}
+
 // Chat state interface for frontend state management
 export interface ChatState {
   conversations: Conversation[];
