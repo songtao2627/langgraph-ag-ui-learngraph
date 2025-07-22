@@ -9,7 +9,7 @@
       "backend/**/*.py",
       "frontend/src/**/*.tsx",
       "frontend/src/**/*.ts",
-      "*.md",
+      "README.md",
       "backend/requirements.txt",
       "frontend/package.json"
     ]
