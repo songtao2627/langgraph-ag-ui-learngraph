@@ -9,6 +9,7 @@ import { useStreamingChat } from '../../hooks/useChatStream';
 import type { Message } from '../../types/chat';
 import { MessageType } from '../../types/chat';
 
+
 interface StreamingChatInterfaceProps {
   className?: string;
 }

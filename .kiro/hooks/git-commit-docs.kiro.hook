@@ -4,7 +4,7 @@
   "description": "Intelligently manages git operations including commits, branching for major changes, and version tagging, while maintaining educational documentation",
   "version": "2",
   "when": {
-    "type": "fileEdited",
+    "type": "userTriggered",
     "patterns": [
       "backend/**/*.py",
       "frontend/src/**/*.tsx",
@@ -16,6 +16,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Files have been modified in this AI-UI learning project. Please analyze the changes and determine the appropriate git workflow:\n\n## Change Analysis\nFirst, analyze the modified files to determine if this is:\n- **Minor Change**: Bug fixes, small improvements, documentation updates\n- **Major Change**: New features, architectural changes, breaking changes, major refactoring\n\n## Git Workflow Decision\n\n### For Minor Changes:\n1. **Standard Git Operations:**\n   - Stage the changed files\n   - Create descriptive commit message\n   - Commit directly to current branch\n\n### For Major Changes:\n1. **Branch Management Workflow:**\n   - Check current branch status\n   - If on main/master, create a new feature branch: `git checkout -b feature/[descriptive-name]`\n   - Stage and commit changes to the feature branch\n   - After development is complete, consider:\n     - Merging back to main branch\n     - Creating a version tag: `git tag -a v[version] -m \"[description]\"`\n\n2. **Version Tagging Guidelines:**\n   - Use semantic versioning (v1.0.0, v1.1.0, v2.0.0)\n   - Major version: Breaking changes or significant new features\n   - Minor version: New features, backward compatible\n   - Patch version: Bug fixes, small improvements\n\n## Documentation Updates\nRegardless of change type:\n- Update relevant documentation files (README.md, docs/, etc.)\n- Add educational explanations for new concepts or patterns\n- Include code examples and learning-focused explanations\n- Update setup instructions or configuration guides if needed\n- Maintain the teaching-focused approach for learners\n\n## Implementation Notes\n- Consider the educational nature when writing commit messages\n- Explain the reasoning behind branching/tagging decisions\n- Help learners understand when to use branches vs direct commits vs tags\n- Provide clear examples of git commands and their purposes\n\nPlease execute the appropriate workflow based on your analysis of the changes.要用中文message进行提交，提交完推送"
+    "prompt": "AI-UI学习项目中的文件已被修改。请分析变更并确定适当的git工作流程：\n\n## 变更分析\n首先，分析修改的文件以确定这是：\n- **小变更**：错误修复、小改进、文档更新\n- **大变更**：新功能、架构变更、破坏性变更、重大重构\n\n## Git工作流程决策\n\n### 对于小变更：\n1. **标准Git操作：**\n   - 暂存变更的文件\n   - 创建描述性的中文提交信息\n   - 直接提交到当前分支\n   - 推送到远程仓库\n\n### 对于大变更：\n1. **分支管理工作流程：**\n   - 检查当前分支状态\n   - 如果在main/master分支，创建新的功能分支：`git checkout -b feature/[描述性名称]`\n   - 暂存并提交变更到功能分支\n   - 开发完成后，考虑：\n     - 合并回主分支\n     - 创建版本标签：`git tag -a v[版本] -m \"[中文描述]\"`\n   - 推送分支和标签到远程仓库\n\n2. **版本标签指南：**\n   - 使用语义化版本控制 (v1.0.0, v1.1.0, v2.0.0)\n   - 主版本：破坏性变更或重大新功能\n   - 次版本：新功能，向后兼容\n   - 补丁版本：错误修复，小改进\n\n## 文档更新\n无论变更类型如何：\n- 更新相关文档文件 (README.md, docs/, 等)\n- 为新概念或模式添加教育性解释\n- 包含代码示例和面向学习的解释\n- 如需要，更新设置说明或配置指南\n- 保持面向学习者的教学方法\n\n## 实施要点\n- **重要：所有提交信息必须使用中文**\n- **重要：提交后必须推送到远程仓库 (git push)**\n- 在编写提交信息时考虑教育性质\n- 解释分支/标签决策的原因\n- 帮助学习者理解何时使用分支vs直接提交vs标签\n- 提供清晰的git命令示例及其用途\n- 确保每次提交后都推送到远程，保持代码同步\n\n请根据您对变更的分析执行适当的工作流程。记住：使用中文提交信息，并在提交后推送到远程仓库。"
   }
 }
