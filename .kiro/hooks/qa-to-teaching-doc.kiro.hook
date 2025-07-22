@@ -1,8 +1,8 @@
 {
   "enabled": true,
   "name": "Q&A to Teaching Documentation",
-  "description": "Automatically converts question and answer sessions into structured teaching documentation and appends to teaching-log.md or creates new teaching files when needed",
-  "version": "1",
+  "description": "Automatically converts AI-UI project related Q&A sessions into structured teaching documentation focused on the learning objectives of this minimal AI chat interface project",
+  "version": "2",
   "when": {
     "type": "fileEdited",
     "patterns": [
@@ -11,6 +11,6 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "A user has been asking questions and receiving answers. Please review the recent conversation history and convert the Q&A session into a structured teaching document format. Add this to docs/teaching-log.md, or if the file is getting too large, create a new teaching document file (like docs/teaching-log-2.md, docs/teaching-log-3.md, etc.). Format the content as a clear tutorial with:\n\n1. Problem/Question section\n2. Solution/Answer section  \n3. Key learning points\n4. Code examples if applicable\n5. Related concepts or follow-up topics\n\nMake sure the teaching content is well-organized, easy to understand, and valuable for future learning reference."
+    "prompt": "请审查最近的对话历史，将与AI-UI最小化学习项目相关的Q&A对话转换为结构化的教学文档格式。\n\n**项目主题聚焦**：\n- 这是一个AI聊天界面的教学项目\n- 核心技术栈：React + TypeScript前端，Python FastAPI后端，LangGraph工作流\n- 学习目标：AI应用开发、现代全栈开发模式、流式响应技术\n\n**内容筛选原则**：\n- 只包含与AI聊天应用开发直接相关的内容\n- 重点关注：FastAPI、React、AI模型集成、流式响应(SSE)、LangGraph工作流\n- 排除与项目学习目标无关的通用编程问题\n- 排除与AI-UI项目架构无关的技术讨论\n\n**文档格式要求**：\n按照现有的教学日志格式添加新条目到docs/teaching-log.md：\n\n```markdown\n## 第N次需求变更：[功能名称]\n\n### 📅 时间\n### 🎯 用户需求\n### 🤔 问题分析\n### 💡 解决方案设计\n### 🔧 实现步骤\n### 📝 关键学习点\n### 🧪 测试策略\n### 🎓 最佳实践总结\n### 🔮 后续优化方向\n```\n\n**重要提醒**：\n- 牢记这是一个AI-UI学习项目，所有文档内容都应该围绕这个主题\n- 如果对话内容与项目学习目标不相关，请跳过不处理\n- 确保教学内容对学习AI应用开发的开发者有实际价值\n- 保持与现有教学日志的风格和深度一致"
   }
 }
