@@ -202,7 +202,7 @@ class ChatApiService {
       // Get base URL from API client config
       const baseURL = apiClient.getConfig().baseURL;
       const streamUrl = `${baseURL}/api/chat/stream`;
-      
+
       const response = await fetch(streamUrl, {
         method: 'POST',
         headers: {

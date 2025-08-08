@@ -8,13 +8,20 @@ Implements comprehensive error handling, request validation, and logging.
 import logging
 import time
 import json
-from fastapi import APIRouter, HTTPException, Depends, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+import asyncio
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Any, Dict
 
 from ..models.chat import ChatRequest, ChatResponse, StreamChunk
 from ..chat.workflow import chat_workflow
+
+def json_default_serializer(obj: Any) -> str:
+    """JSON serializer for objects not serializable by default json code"""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError(f"Type {type(obj).__name__} not serializable")
 
 # 配置日志
 logger = logging.getLogger(__name__)
@@ -36,52 +43,57 @@ router = APIRouter(
 async def chat_stream(request: ChatRequest, http_request: Request):
     """
     处理流式聊天请求并返回Server-Sent Events响应。
-    
-    Args:
-        request: 包含用户消息和可选会话ID的请求
-        http_request: FastAPI请求对象，用于获取客户端信息
-        
-    Returns:
-        StreamingResponse with Server-Sent Events
-        
-    Raises:
-        HTTPException: 如果请求处理失败
     """
     client_ip = http_request.client.host if http_request.client else "unknown"
     
     try:
-        # 验证请求内容
         if not request.message or not request.message.strip():
             logger.warning(f"收到空消息请求 - IP: {client_ip}")
-            raise HTTPException(
-                status_code=400, 
-                detail="Message cannot be empty"
-            )
+            raise HTTPException(status_code=400, detail="Message cannot be empty")
         
         logger.info(
-            f"收到流式聊天请求 - IP: {client_ip}, "
-            f"消息长度: {len(request.message)}, "
-            f"会话ID: {request.conversation_id or 'new'}"
+            f"收到流式聊天请求 - IP: {client_ip}, 会话ID: {request.conversation_id or 'new'}"
         )
         
         async def generate_sse():
             """生成Server-Sent Events格式的数据流"""
             try:
                 async for chunk in chat_workflow.process_message_stream(request):
-                    # 将StreamChunk转换为JSON
                     chunk_data = chunk.model_dump()
-                    # 格式化为SSE格式
-                    yield f"data: {json.dumps(chunk_data, ensure_ascii=False)}\n\n"
+                    yield f"data: {json.dumps(chunk_data, ensure_ascii=False, default=json_default_serializer)}\n\n"
                     
+            except asyncio.CancelledError:
+                # 客户端断开连接，正常情况
+                logger.info(f"客户端断开连接 - IP: {client_ip}, 会话ID: {request.conversation_id or 'unknown'}")
+                return
+                
             except Exception as e:
-                # 发送错误事件
+                logger.error(f"SSE生成器中发生错误 - IP: {client_ip}: {e}", exc_info=True)
+                
+                # 创建详细的错误响应
                 error_chunk = StreamChunk(
                     type="error",
-                    content=str(e),
+                    content="服务器内部错误，请重试",
                     conversation_id=request.conversation_id or "unknown",
-                    metadata={"error_type": type(e).__name__}
+                    metadata={
+                        "error_type": type(e).__name__,
+                        "error_category": "sse_generation_error",
+                        "timestamp": datetime.utcnow().isoformat()
+                    }
                 )
-                yield f"data: {json.dumps(error_chunk.model_dump(), ensure_ascii=False)}\n\n"
+                
+                try:
+                    yield f"data: {json.dumps(error_chunk.model_dump(), ensure_ascii=False, default=json_default_serializer)}\n\n"
+                except Exception as json_error:
+                    logger.error(f"JSON序列化错误: {json_error}")
+                    # 发送简单的错误消息
+                    simple_error = {
+                        "type": "error",
+                        "content": "系统错误",
+                        "conversation_id": request.conversation_id or "unknown",
+                        "timestamp": datetime.utcnow().isoformat()
+                    }
+                    yield f"data: {json.dumps(simple_error, ensure_ascii=False)}\n\n"
         
         return StreamingResponse(
             generate_sse(),

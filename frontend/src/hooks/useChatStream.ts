@@ -214,18 +214,25 @@ export function useStreamingChat(options: UseStreamingChatOptions = {}): UseStre
           streamingMessageRef.current += chunk.content;
           setStreamingMessage(streamingMessageRef.current);
           
-          // Update the AI message in conversation
-          updateStreamingMessage(
-            targetConversationId, 
-            aiMessageId, 
-            streamingMessageRef.current
-          );
+          // 注释掉这行，避免重复显示
+          // updateStreamingMessage(
+          //   targetConversationId, 
+          //   aiMessageId, 
+          //   streamingMessageRef.current
+          // );
           
           onMessageChunk?.(chunk.content, chunk.conversation_id);
         },
         
         onEnd: (chunk: StreamChunk) => {
           console.log('Stream ended:', chunk);
+          
+          // 更新conversations中的AI消息为最终内容
+          updateStreamingMessage(
+            targetConversationId, 
+            aiMessageId, 
+            streamingMessageRef.current
+          );
           
           // Finalize the AI message
           const finalMessage: Message = {

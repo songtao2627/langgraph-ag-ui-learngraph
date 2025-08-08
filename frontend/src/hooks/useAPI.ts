@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { ApiResponse, ApiError } from '../types/api';
+import type { ApiResponse, ApiError } from '../types/api';
 
 /**
  * Generic API hook state interface
@@ -153,8 +153,7 @@ export function useApi<T>(
  * Hook for handling multiple concurrent API calls
  */
 export function useMultipleApi<T extends Record<string, any>>(
-  apiCalls: { [K in keyof T]: (...args: any[]) => Promise<ApiResponse<T[K]>> },
-  options: UseApiOptions = {}
+  apiCalls: { [K in keyof T]: (...args: any[]) => Promise<ApiResponse<T[K]>> }
 ) {
   const [states, setStates] = useState<{ [K in keyof T]: ApiState<T[K]> }>(
     Object.keys(apiCalls).reduce((acc, key) => {

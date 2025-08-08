@@ -6,19 +6,18 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { chatApiService } from '../services/chat';
 import { useApi } from './useAPI';
-import { 
+import type { 
   ChatState, 
   Message, 
   Conversation, 
-  ChatRequest, 
-  ChatResponse,
-  MessageType 
+  ChatRequest
 } from '../types/chat';
+import { MessageType } from '../types/chat';
 
 /**
  * Chat hook options
  */
-interface UseChatOptions {
+export interface UseChatOptions {
   autoLoadConversations?: boolean;
   maxRetries?: number;
   retryDelay?: number;
@@ -30,7 +29,7 @@ interface UseChatOptions {
 /**
  * Chat hook return type
  */
-interface UseChatReturn {
+export interface UseChatReturn {
   // State
   state: ChatState;
   currentConversation: Conversation | null;

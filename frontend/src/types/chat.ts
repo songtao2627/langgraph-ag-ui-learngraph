@@ -4,11 +4,13 @@
  */
 
 // Message types enum
-export const enum MessageType {
-  USER = 'user',
-  AI = 'ai',
-  SYSTEM = 'system'
-}
+export const MessageType = {
+  USER: 'user',
+  AI: 'ai',
+  SYSTEM: 'system'
+} as const;
+
+export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 // Individual message interface
 export interface Message {

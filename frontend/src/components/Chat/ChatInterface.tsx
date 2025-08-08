@@ -47,9 +47,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ className = '' }) => {
         conversationId = userMessage.conversation_id;
         setChatState(prev => ({
           ...prev,
-          currentConversationId: conversationId,
+          currentConversationId: conversationId!,
           conversations: [{
-            id: conversationId,
+            id: conversationId!,
             messages: [],
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),

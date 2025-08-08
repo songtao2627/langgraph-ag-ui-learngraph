@@ -3,12 +3,11 @@
  * Demonstrates how to use the streaming chat hook
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { FC } from 'react';
 import { useStreamingChat } from '../../hooks/useChatStream';
 import type { Message } from '../../types/chat';
 import { MessageType } from '../../types/chat';
-
 
 interface StreamingChatInterfaceProps {
   className?: string;
@@ -36,9 +35,8 @@ export const StreamingChatInterface: FC<StreamingChatInterfaceProps> = ({
     onMessageStart: (conversationId) => {
       console.log('Message streaming started for conversation:', conversationId);
     },
-    onMessageChunk: (chunk, conversationId) => {
+    onMessageChunk: (chunk) => {
       console.log('Received chunk:', chunk);
-      // Auto-scroll to bottom when receiving chunks
       scrollToBottom();
     },
     onMessageComplete: (message) => {
@@ -176,6 +174,7 @@ export const StreamingChatInterface: FC<StreamingChatInterfaceProps> = ({
             <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-lg bg-gray-200 text-gray-800 animate-pulse">
               <div className="text-sm">
                 {streamingMessage}
+                ⬆️
                 <span className="inline-block w-2 h-4 ml-1 bg-current animate-pulse">
                   |
                 </span>
